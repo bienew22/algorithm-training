@@ -38,19 +38,18 @@ class Main {
         int[] queueB = Arrays.stream(br.readLine().split(" "))
                 .mapToInt(v -> Integer.parseInt(v) - 1).toArray();
 
-        // DP[a][b][c]
-        // c=0: A의 a 번째 index과 B의 b번째 index에 도달 했을 때 얻을 수 있는 최대 점수
-        // c=1: 최대 점수를 얻기위하여 이전 좌표에서 어떤 작업했는지 의미.
-        int[][][] DP = new int[A + 1][B + 1][2];
-        
-        // [a][0] 형태는 무조건 이전 좌표에서 1번 작업 수행해야 만 도착 가능.
-        for (int a = 1; a <= A; a++) {
-            DP[a][0][1] = 1;
-        }
+        // DP[a][b] : A의 a 번째 index과 B의 b번째 index에 도달 했을 때 얻을 수 있는 최대 점수
+        int[][] DP = new int[A + 1][B + 1];
 
-        // [0][b] 형태는 무조건 이전 좌표에서 2번 작업 수행해야 만 도착 가능.
+        // 최대 점수를 얻기 위하여 이전 좌표에서 수행한 작업 번호를 의미.
+        int[][] CMD = new int[A + 1][B + 1];
+
+        // [a][0]는 1번 [0][b]는 2번을 수행해야 만 도착 가능.
+        for (int a = 1; a <= A; a++) {
+            CMD[a][0] = 1;
+        }
         for (int b = 1; b <= B; b++) {
-            DP[0][b][1] = 2;
+            CMD[0][b] = 2;
         }
 
         //== DP 계산하기.
@@ -59,27 +58,27 @@ class Main {
                 int base = score[queueA[a - 1]][queueB[b - 1]];
 
                 // 1번 작업을 통하여 현재 위치에 도착한 경우.
-                if (DP[a][b][0] <= DP[a - 1][b][0]) {
-                    DP[a][b][0] = DP[a - 1][b][0];
-                    DP[a][b][1] = 1;
+                if (DP[a][b] <= DP[a - 1][b]) {
+                    DP[a][b] = DP[a - 1][b];
+                    CMD[a][b] = 1;
                 }
 
                 // 2번 작업을 통하여 현재 위치에 도착한 경우.
-                if (DP[a][b][0] <= DP[a][b - 1][0]) {
-                    DP[a][b][0] = DP[a][b - 1][0];
-                    DP[a][b][1] = 2;
+                if (DP[a][b] <= DP[a][b - 1]) {
+                    DP[a][b] = DP[a][b - 1];
+                    CMD[a][b] = 2;
                 }
 
                 // 3번 작업을 통하여 현재 위치에 도착한 경우.
-                if (DP[a][b][0] <= DP[a - 1][b - 1][0] + base) {
-                    DP[a][b][0] = DP[a - 1][b - 1][0] + base;
-                    DP[a][b][1] = 3;
+                if (DP[a][b] <= DP[a - 1][b - 1] + base) {
+                    DP[a][b] = DP[a - 1][b - 1] + base;
+                    CMD[a][b] = 3;
                 }
             }
         }
 
-        System.out.println(DP[A][B][0]);
-        System.out.println(getPath(DP, A, B));
+        System.out.println(DP[A][B]);
+        System.out.println(getPath(CMD, A, B));
 
         // test 출력
 //        for(int[][] dp: DP) {
@@ -90,17 +89,17 @@ class Main {
 //        }
     }
 
-    String getPath(int[][][] CMD, int sizeA, int sizeB) {
+    String getPath(int[][] CMD, int sizeA, int sizeB) {
         StringBuilder sb = new StringBuilder();
 
         while (sizeA >= 0 && sizeB >= 0) {
-            if (CMD[sizeA][sizeB][1] == 1) {
+            if (CMD[sizeA][sizeB] == 1) {
                 sb.append("1 ");
                 sizeA -= 1;
-            } else if (CMD[sizeA][sizeB][1] == 2) {
+            } else if (CMD[sizeA][sizeB] == 2) {
                 sb.append("2 ");
                 sizeB -= 1;
-            } else if (CMD[sizeA][sizeB][1] == 3) {
+            } else if (CMD[sizeA][sizeB] == 3) {
                 sb.append("3 ");
                 sizeB -= 1;
                 sizeA -= 1;
