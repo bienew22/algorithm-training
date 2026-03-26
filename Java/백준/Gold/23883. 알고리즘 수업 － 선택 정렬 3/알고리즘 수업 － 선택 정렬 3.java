@@ -49,7 +49,7 @@ class Main {
                 A[loc] = A[i];
 
                 // 실제 숫자 이동환 위치 인덱스 업데이트
-                numIdx.put(A[loc], loc);
+                numIdx.put(A[i], loc);
             }
         }
 
