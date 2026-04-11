@@ -21,9 +21,6 @@ def solution(arr, l, r):
         if base_e == -1 and r - 1 <= value:
             base_e = idx
 
-    if base_e == -1:
-        base_e = len(e_idx_list) - 1
-
     # print(f's_idx_list={s_idx_list}')
     # print(f'e_idx_list={e_idx_list}')
     # print(f'base_s={base_s}, base_e={base_e}')
